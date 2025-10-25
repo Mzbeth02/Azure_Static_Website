@@ -1,0 +1,24 @@
+name: Deploy Static Website to Azure
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'WebsiteTemp/**'   # Only run when files inside WebsiteTemp change
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # can change to windows-latest if you prefer
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Upload static site to Azure Blob Storage
+        run: |
+          az storage blob upload-batch \
+            --account-name oleeystorage1 \
+            --destination '$web' \
+            --source ./WebsiteTemp \
+            --account-key ${{ secrets.AZURE_STORAGE_KEY }}
+            --overwrite true
