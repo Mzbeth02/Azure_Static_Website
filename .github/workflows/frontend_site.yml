@@ -25,7 +25,7 @@ jobs:
           inlineScript: |
             az storage blob upload-batch \
               --account-name oleeystorage1 \
-              --auth-mode login \
+              --account-key ${{ secrets.AZURE_STORAGE_KEY }} \
               --destination '$web' \
               --source ./WebsiteTemp \
               --overwrite true
