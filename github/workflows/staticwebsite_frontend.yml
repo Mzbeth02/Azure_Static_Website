@@ -1,0 +1,34 @@
+name: Deploy_Static_Website
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'WebsiteTemp/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIAL }}
+
+      - name: Upload to Azure Storage
+        uses: azure/CLI@v2
+        with: 
+          inlineScript: |
+            az storage blob upload-batch \
+              --account-name oleeystorage1 \
+              --auth-mode key \
+              --destination '$web' \
+              --source ./WebsiteTemp \
+              --overwrite true
+      
+      - name: Logout
+        run: az logout
+        if: always()
